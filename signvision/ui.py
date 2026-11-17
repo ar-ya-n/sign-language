@@ -6,8 +6,11 @@ from PIL import ImageTk
 
 
 class SignVisionUI:
-    def __init__(self, root: tk.Tk, on_start: Callable, on_stop: Callable, on_clear: Callable, on_close: Callable):
+    def __init__(self, root: tk.Tk, on_start: Callable, on_stop: Callable, on_clear: Callable, on_close: Callable,
+                 on_mode: Callable | None = None, on_word_action: Callable | None = None):
         self.root, self.on_start, self.on_stop, self.on_clear, self.on_close = root, on_start, on_stop, on_clear, on_close
+        self.on_mode = on_mode or (lambda _mode: None)
+        self.on_word_action = on_word_action or (lambda _action: None)
         root.title("SignVision AI - Real-Time Hand Gesture Recognition")
         root.geometry("1000x760")
         root.configure(bg="#0b1220")
@@ -29,6 +32,24 @@ class SignVisionUI:
         ttk.Button(buttons, text="Start", command=on_start).pack(side=tk.LEFT, padx=4)
         ttk.Button(buttons, text="Stop", command=on_stop).pack(side=tk.LEFT, padx=4)
         ttk.Button(buttons, text="Clear history", command=on_clear).pack(side=tk.LEFT, padx=4)
+        mode = ttk.Frame(root); mode.pack(pady=(0, 6))
+        ttk.Label(mode, text="Analysis mode:").pack(side=tk.LEFT)
+        self.mode = tk.StringVar(value="alphabet")
+        ttk.Radiobutton(mode, text="Alphabet", variable=self.mode, value="alphabet",
+                        command=lambda: self.on_mode(self.mode.get())).pack(side=tk.LEFT, padx=4)
+        ttk.Radiobutton(mode, text="Word", variable=self.mode, value="word",
+                        command=lambda: self.on_mode(self.mode.get())).pack(side=tk.LEFT, padx=4)
+        word = ttk.Frame(root); word.pack(pady=(0, 6))
+        for label, action in (
+            ("START WORD ANALYSIS", "start"), ("Pause", "pause"), ("Resume", "resume"),
+            ("Add letter", "add"), ("Space", "space"), ("Undo letter", "backspace"),
+            ("Clear word", "clear"), ("Finish word", "finish"),
+        ):
+            ttk.Button(word, text=label, command=lambda a=action: self.on_word_action(a)).pack(
+                side=tk.LEFT, padx=2
+            )
+        self.word = ttk.Label(root, text="Word: —", style="Result.TLabel")
+        self.word.pack(pady=(0, 4))
         self.history = tk.Listbox(root, height=6)
         self.history.pack(fill=tk.X, padx=12, pady=(0, 12))
 
@@ -45,6 +66,9 @@ class SignVisionUI:
 
     def set_status(self, text: str) -> None:
         self.status.configure(text=text)
+
+    def set_word(self, text: str) -> None:
+        self.word.configure(text=f"Word: {text or '—'}")
 
     def show_error(self, text: str) -> None:
         self.set_status(text)

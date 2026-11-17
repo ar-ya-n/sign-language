@@ -5,6 +5,8 @@ from pathlib import Path
 @dataclass(frozen=True)
 class AppConfig:
     model_path: Path = Path(__file__).resolve().parent.parent / "models" / "gesture_recognizer.task"
+    alphabet_model_path: Path = Path(__file__).resolve().parent.parent / "models" / "isl_classifier.tflite"
+    alphabet_metadata_path: Path = Path(__file__).resolve().parent.parent / "models" / "isl_classifier.json"
     camera_index: int = 0
     score_threshold: float = 0.60
     max_results: int = 1
