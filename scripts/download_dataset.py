@@ -1,4 +1,4 @@
-"""Download RealSign metadata/data only when a verified URL is supplied.
+"""Download an ASL dataset archive only when a verified URL is supplied.
 
 The project does not bundle or silently invent a dataset URL.  Set
 ``--url`` to an official release URL and inspect its license before use.
@@ -14,7 +14,7 @@ def main() -> None:
     parser.add_argument("--output", type=Path, default=Path("data") / "realsign.zip")
     args = parser.parse_args()
     if not args.url:
-        raise SystemExit("No URL supplied. Obtain the official RealSign CC0 release URL first.")
+        raise SystemExit("No URL supplied. Provide the ASL dataset archive URL explicitly.")
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with urlopen(args.url, timeout=120) as source, args.output.open("wb") as target:
         while chunk := source.read(1024 * 1024):

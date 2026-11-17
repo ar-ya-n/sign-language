@@ -10,7 +10,7 @@ from pathlib import Path
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("dataset", type=Path)
-    parser.add_argument("--output", type=Path, default=Path("models") / "isl_classifier.tflite")
+    parser.add_argument("--output", type=Path, default=Path("models") / "asl_classifier.tflite")
     parser.add_argument("--epochs", type=int, default=10)
     args = parser.parse_args()
     try:
